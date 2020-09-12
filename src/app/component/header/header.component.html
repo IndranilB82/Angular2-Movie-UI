@@ -1,0 +1,10 @@
+<div class="ui orange inverted borderless stackable menu">
+  <a class="header item" routerLink="/home">
+    <i class="video icon cursor"></i> {{language|langCode:'MovieDemo'}}
+  </a>
+  <div class="right menu">
+    <select (change)="changeLanguage($event.target.value)" [(ngModel)]="language">
+      <option *ngFor="let lang of languages" value={{lang}}>{{lang.toUpperCase()}}</option>
+    </select>
+  </div>
+</div>
