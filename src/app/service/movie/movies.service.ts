@@ -9,9 +9,7 @@ import { Movie } from '../../entity/movie/movie';
 
 @Injectable()
 export class MoviesService {
-  private url = 'https://api.themoviedb.org/3/movie/';
-  private searchUrl = 'https://api.themoviedb.org/3/search/movie';
-  private apiKey = '68b4fe2a513155a58dd0af4adacb281b';
+  private url = 'https://localhost:44369/api/movie/';
   private language: string;
 
   constructor(private http: Http) {
@@ -20,22 +18,15 @@ export class MoviesService {
   }
 
   getMovies(): Observable<Movie[]> {
-    let moviesUrl = `${this.url}popular?api_key=${this.apiKey}&language=${this.language}`;
+    let moviesUrl = `${this.url}movielist/${this.language}`;
 
     return this.http.get(moviesUrl)
       .map(this.extractData)
       .catch(this.handleError);
-  }
-
-  searchMovies(query: string) {
-    let searchUrl = `${this.searchUrl}?api_key=${this.apiKey}&language=${this.language}&query=${query}`;
-
-    return this.http.get(searchUrl)
-      .map((res) => { return res.json() })
-  }
+  } 
 
   getDetails(id: number) {
-    let detailsUrl = `${this.url}${id}?api_key=${this.apiKey}&language=${this.language}`;
+    let detailsUrl = `${this.url}moviedetails/${this.language}/${id}`;
 
     return this.http.get(detailsUrl)
       .map((res) => { return res.json() })
