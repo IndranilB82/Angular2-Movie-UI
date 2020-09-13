@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { MoviesService } from '../../service/movie/movies.service';
 import { Movie } from '../../entity/movie/movie';
+import { MovieFactoryAbstract } from '../../abstract-factory/interface/service/factory/movie/movie.factory.abstract';
+import { MovieInterface } from '../../abstract-factory/interface/model/movie.model.interface';
 
 @Component({
   selector: 'app-movies',
@@ -17,7 +19,8 @@ export class MoviesComponent implements OnInit {
 
   constructor(
     private moviesService: MoviesService,
-    private router: Router
+    private router: Router,
+    private _movieFactoryAbstract: MovieFactoryAbstract
   ) { }
 
   ngOnInit() {
@@ -27,46 +30,12 @@ export class MoviesComponent implements OnInit {
 
   getMovies() {
     this.movies = this.moviesService.getMovies();
-  }
-
-  dynamicSort(property) {
-    let sortOrder = 1;
-    if (property[0] === "-") {
-      sortOrder = -1;
-      property = property.substr(1);
-    }
-    return function (a, b) {
-      let result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
-      return result * sortOrder;
-    }
-  }
+  } 
 
   sortMovies(property: string) {
-    switch (property.toLowerCase()) {
-      case "title":
-        if (this.sort == 1) {
-          this.movies = this.movies.map(items => items.sort(this.dynamicSort("-title")));
-          this.sort = -1;
-        }
-        else {
-          this.movies = this.movies.map(items => items.sort(this.dynamicSort("title")));
-          this.sort = 1;
-        }
-        break;
-      case "popularity":
-        if (this.sort == 2) {
-          this.movies = this.movies.map(items => items.sort(this.dynamicSort("-popularity")));
-          this.sort = -2;
-        }
-        else {
-          this.movies = this.movies.map(items => items.sort(this.dynamicSort("popularity")));
-          this.sort = 2;
-        }
-        break;
-      default:
-        break;
-    }
-
+    const sortMovieRecord: MovieInterface = this._movieFactoryAbstract.sortMovies(property, this.movies);
+    this.movies = sortMovieRecord.movies;
+    this.sort = sortMovieRecord.sort;
   }
 
   onSelect(movie: Movie) {

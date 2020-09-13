@@ -1,9 +1,10 @@
-import { Component, OnInit }        from '@angular/core';
-import { ActivatedRoute, Router }   from '@angular/router';
-import { SearchService }            from '../../../service/search/search.service';
-import { MoviesService }            from '../../../service/movie/movies.service';
-import { Movie }                    from '../../../entity/movie/movie';
-import { Search }                    from '../../../entity/movie/search';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SearchService } from '../../../service/search/search.service';
+import { MoviesService } from '../../../service/movie/movies.service';
+import { Movie } from '../../../entity/movie/movie';
+import { Search } from '../../../entity/movie/search';
+import { MovieFactoryAbstract } from '../../../abstract-factory/interface/service/factory/movie/movie.factory.abstract';
 
 @Component({
   selector: 'app-search-movies',
@@ -24,7 +25,8 @@ export class SearchMoviesComponent implements OnInit {
     private searchService: SearchService,
     private moviesService: MoviesService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private _movieFactoryAbstract: MovieFactoryAbstract
   ) { }
 
   ngOnInit() {
@@ -53,36 +55,40 @@ export class SearchMoviesComponent implements OnInit {
 
   dynamicSort(property) {
     let sortOrder = 1;
-    if(property[0] === "-") {
+    if (property[0] === "-") {
       sortOrder = -1;
       property = property.substr(1);
     }
-    return function (a,b) {
+    return function (a, b) {
       let result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
       return result * sortOrder;
     }
   }
 
   sortMovies(property: string) {
-    if (property == 'title') {
-      if (this.sort == 1) {
-        this.movies.sort(this.dynamicSort("-title"));
-        this.sort = -1;
-      }
-      else {
-        this.movies.sort(this.dynamicSort("title"));
-        this.sort = 1;
-      }
-    }
-    else if (property == 'popularity') {
-      if (this.sort == 2) {
-        this.movies.sort(this.dynamicSort("-popularity"));
-        this.sort = -2;
-      }
-      else {
-        this.movies.sort(this.dynamicSort("popularity"));
-        this.sort = 2;
-      }
+    switch (property.toLowerCase()) {
+      case "title":
+        if (this.sort == 1) {
+          this.movies.sort(this._movieFactoryAbstract.dynamicSort("-title"));
+          this.sort = -1;
+        }
+        else {
+          this.movies.sort(this._movieFactoryAbstract.dynamicSort("title"));
+          this.sort = 1;
+        }
+        break;
+      case "popularity":
+        if (this.sort == 2) {
+          this.movies.sort(this._movieFactoryAbstract.dynamicSort("-popularity"));
+          this.sort = -2;
+        }
+        else {
+          this.movies.sort(this._movieFactoryAbstract.dynamicSort("popularity"));
+          this.sort = 2;
+        }
+        break;
+      default:
+        break;
     }
   }
 

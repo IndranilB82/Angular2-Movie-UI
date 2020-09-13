@@ -16,6 +16,8 @@ import { MoviesService } from './service/movie/movies.service';
 import { SearchService } from './service/search/search.service';
 
 import { LanguagePipe } from './pipe/lang-pipe';
+import { MovieFactoryAbstract } from './abstract-factory/interface/service/factory/movie/movie.factory.abstract';
+import { MovieFactory } from './abstract-factory/service/factory/movie/movie.factory';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -48,7 +50,8 @@ const appRoutes: Routes = [
   ],
   providers: [
     MoviesService,
-    SearchService
+    SearchService,
+    { provide: MovieFactoryAbstract, useClass: MovieFactory },
   ],
   bootstrap: [AppComponent]
 })
